@@ -2,24 +2,20 @@ package com.ilearn.mapper;
 
 import com.ilearn.domain.*;
 import com.ilearn.domain.dto.*;
-import com.ilearn.facade.Searcher;
 import com.ilearn.service.DbService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class Mapper {
-    DbService dbService;
-    Searcher searcher;
-
-    public Mapper(DbService dbService, Searcher searcher) {
-        this.dbService = dbService;
-        this.searcher = searcher;
-    }
+    @Autowired
+    private DbService dbService;
 
     public Lesson mapToLesson(final LessonDto lessonDto) {
         return new Lesson(
@@ -32,27 +28,11 @@ public class Mapper {
                 lessonDto.getLessonNr(),
                 lessonDto.getLink(),
                 lessonDto.getClassNumber(),
-                searcher.searchTeachers(lessonDto),
-                searcher.searchStudents(lessonDto)
+                getTeachers(lessonDto),
+                getStudents(lessonDto)
         );
     }
-
     public LessonDto mapToLessonDto(Lesson lesson) {
-        List<String> teachersNames = new ArrayList<>();
-        List<Long> teachersId = new ArrayList<>();
-        List<String> studentsNames = new ArrayList<>();
-        List<Long> studentsId = new ArrayList<>();
-        lesson.getTeachers().forEach(teacher -> {
-            teachersNames.add(teacher.getName() + " " + teacher.getLastname());
-            teachersId.add(teacher.getId());
-        });
-        lesson.getStudents().forEach(student -> {
-            studentsNames.add(student.getName() + " " + student.getClassNumber());
-            studentsId.add(student.getId());
-        });
-//        Long lessonId = 0L;
-//        if (!isNull(lesson.getHomework().getId()))
-//            lesson.getHomework().getId();
         return new LessonDto(
                 lesson.getId(),
                 lesson.getName(),
@@ -63,16 +43,16 @@ public class Mapper {
                 lesson.getLessonNr(),
                 lesson.getLink(),
                 lesson.getClassNumber(),
-                studentsNames,
-                studentsId,
-                teachersNames,
-                teachersId);
+                getStudentsNames(lesson),
+                getStudentsId(lesson),
+                getTeachersNames(lesson),
+                getTeachersId(lesson));
     }
 
     public List<LessonDto> mapToLessonDtoList(final List<Lesson> lessons) {
-        List<LessonDto> lessonsDto = new ArrayList<>();
-        lessons.forEach(lesson -> lessonsDto.add(new Mapper(dbService, searcher).mapToLessonDto(lesson)));
-        return lessonsDto;
+        return lessons.stream()
+                .map(this::mapToLessonDto)
+                .collect(Collectors.toList());
     }
 
     public Student mapToStudent(final StudentDto studentDto) {
@@ -81,110 +61,73 @@ public class Mapper {
                 studentDto.getName(),
                 studentDto.getLastname(),
                 studentDto.getClassNumber(),
-                searcher.searchLessons(studentDto),
-                searcher.searchTeachers(studentDto),
+                getLessons(studentDto),
+                getTeachers(studentDto),
                 dbService.getUserDatabase().getUser(studentDto.getUserId()),
-                searcher.searchMarks(studentDto),
-                searcher.searchHomeworkA(studentDto)
+                getMarks(studentDto),
+                getHomework(studentDto)
         );
     }
 
     public StudentDto mapToStudentDto(final Student student) {
-        List<String> teachersNames = new ArrayList<>();
-        List<String> lessonsNames = new ArrayList<>();
-        List<Long> teachersId = new ArrayList<>();
-        List<Long> lessonsId = new ArrayList<>();
-        List<Long> marksId = new ArrayList<>();
-
-        student.getTeachers().forEach(teacher -> {
-            teachersNames.add(teacher.getName() + " " + teacher.getLastname());
-            teachersId.add(teacher.getId());
-        });
-        student.getLessons().forEach(lesson -> {
-            lessonsNames.add(lesson.getName() + " " + lesson.getClassNumber());
-            lessonsId.add(lesson.getId());
-        });
-        student.getMarks().forEach(mark -> {
-            marksId.add(mark.getId());
-        });
-        Long userId;
-        if (student.getUser()==null) {
-            userId = 0L;
-        } else {
-            userId = student.getUser().getId();
-        }
         return new StudentDto(
                 student.getId(),
                 student.getName(),
                 student.getLastname(),
                 student.getClassNumber(),
-                lessonsNames,
-                teachersNames,
-                userId,
-                lessonsId,
-                teachersId,
-                marksId
+                getLessonsNames(student),
+                getTeachersNames(student),
+                student.getUser().getId(),
+                getLessonsId(student),
+                getTeachersId(student),
+                getMarksId(student)
         );
     }
 
     public List<StudentDto> mapToStudentDtoList(final List<Student> students) {
-        List<StudentDto> studentsDto = new ArrayList<>();
-        students.forEach(student -> studentsDto.add(new Mapper(dbService, searcher).mapToStudentDto(student)));
-        return studentsDto;
+        return students.stream()
+                .map(this::mapToStudentDto)
+                .collect(Collectors.toList());
     }
 
 
     public Teacher mapToTeacher(final TeacherDto teacherDto) {
-
         return new Teacher(
                 teacherDto.getId(),
                 teacherDto.getName(),
                 teacherDto.getLastname(),
-                searcher.searchLessons(teacherDto),
-                searcher.searchStudents(teacherDto)
+                getLessons(teacherDto),
+                getStudents(teacherDto)
         );
     }
 
     public TeacherDto mapToTeacherDto(Teacher teacher) {
-        List<String> lessonNames = new ArrayList<>();
-        List<String> studentsNames = new ArrayList<>();
-        List<Long> lessonsIdList = new ArrayList<>();
-        List<Long> studentsIdList = new ArrayList<>();
-
-        teacher.getStudents().forEach(student -> {
-            studentsNames.add(student.getName() + " " + student.getLastname());
-            studentsIdList.add(student.getId());
-        });
-        teacher.getLessons().forEach(lesson -> {
-            lessonNames.add(lesson.getName() + " " + lesson.getClassNumber());
-            lessonsIdList.add(lesson.getId());
-        });
         return new TeacherDto(
                 teacher.getId(),
                 teacher.getName(),
                 teacher.getLastname(),
-                lessonNames,
-                studentsNames,
-                lessonsIdList,
-                studentsIdList
+                getLessonsNames(teacher),
+                getStudentsNames(teacher),
+                getLessonsId(teacher),
+                getStudentsId(teacher)
         );
     }
 
     public List<TeacherDto> mapToTeacherDtoList(final List<Teacher> teachers) {
-        List<TeacherDto> teachersDto = new ArrayList<>();
-        teachers.forEach(teacher -> teachersDto.add(new Mapper(dbService, searcher).mapToTeacherDto(teacher)));
-        return teachersDto;
+        return teachers.stream()
+                .map(this::mapToTeacherDto)
+                .collect(Collectors.toList());
     }
 
-    public Mark mapToMark(MarkDto markDto) {
-        return new Mark(
-                markDto.getId(),
-                markDto.getValue(),
-                markDto.getDescription(),
-                markDto.getSubject(),
-                Date.from(Instant.now()),
-                dbService.getStudentDatabase().getStudent(markDto.getStudentId()));
-    }
+//    public Mark mapToMark(MarkDto markDto) {
+//        return new Mark(
+//                markDto.getId(),
+//                markDto.getValue(),
+//                markDto.getDescription(),
+//                markDto.getSubject(),
+//                Date.from(Instant.now()),
+//                dbService.getStudentDatabase().getStudent(markDto.getStudentId()));
+//    }
 
     public MarkDto mapToMarkDto(Mark mark) {
         return new MarkDto(
@@ -197,9 +140,9 @@ public class Mapper {
     }
 
     public List<MarkDto> mapToMarkDtoList(List<Mark> marks) {
-        List<MarkDto> marksDto = new ArrayList<>();
-        marks.forEach(mark -> marksDto.add(new Mapper(dbService, searcher).mapToMarkDto(mark)));
-        return marksDto;
+        return marks.stream()
+                .map(this::mapToMarkDto)
+                .collect(Collectors.toList());
     }
 
     public Homework mapToHomework(HomeworkDto homeworkDto) {
@@ -223,14 +166,9 @@ public class Mapper {
     }
 
     public List<HomeworkDto> mapToHomeworkDtoList(List<Homework> homeworkList) {
-        List<HomeworkDto> homeworkDtoList = new ArrayList<>();
-        homeworkList.forEach(homework -> homeworkDtoList.add(new Mapper(dbService, searcher).mapToHomeworkDto(homework)));
-        return homeworkDtoList;
-    }
-
-    public String mapToMembers(String members) {
-        return members.replace("[", "")
-                .replace("]", "");
+        return homeworkList.stream()
+                .map(this::mapToHomeworkDto)
+                .collect(Collectors.toList());
     }
 
     public User mapToUser(UserDto userDto) {
@@ -242,8 +180,139 @@ public class Mapper {
     }
 
     public List<UserDto> mapToUserDtoList(List<User> users) {
-        List<UserDto> userDtoList = new ArrayList<>();
-        users.forEach(user -> userDtoList.add(new Mapper(dbService, searcher).mapToUserDto(user)));
-        return userDtoList;
+        return users.stream()
+                .map(this::mapToUserDto)
+                .collect(Collectors.toList());
+    }
+
+
+    ////////////////////////////////////////////////////////////////////
+    private List<Student> getStudents(LessonDto lessonDto) {
+        List<Student> students = new ArrayList<>();
+        for (int i = 0; i < lessonDto.getStudentsId().size(); i++) {
+            students.add(dbService.getStudentDatabase().getStudent(lessonDto.getStudentsId().get(i)));
+        }
+        return students;
+    }
+
+    private List<Teacher> getTeachers(LessonDto lessonDto) {
+        List<Teacher> teachers = new ArrayList<>();
+        for (int i = 0; i < lessonDto.getStudentsId().size(); i++) {
+            teachers.add(dbService.getTeacherDatabase().getTeacher(lessonDto.getTeachersId().get(i)));
+        }
+        return teachers;
+    }
+    private List<Lesson> getLessons(StudentDto studentDto) {
+        List<Lesson> lessons = new ArrayList<>();
+        for (int i = 0; i < studentDto.getLessonsId().size(); i++) {
+            lessons.add(dbService.getLessonDatabase().getLesson(studentDto.getLessonsId().get(i)));
+        }
+        return lessons;
+    }
+
+    private List<Lesson> getLessons(TeacherDto teacherDto) {
+        List<Lesson> lessons = new ArrayList<>();
+        for (int i = 0; i < teacherDto.getLessonsId().size(); i++) {
+            lessons.add(dbService.getLessonDatabase().getLesson(teacherDto.getLessonsId().get(i)));
+        }
+        return lessons;
+    }
+
+    private List<Student> getStudents(TeacherDto teacherDto) {
+        List<Student> students = new ArrayList<>();
+        for (int i = 0; i < teacherDto.getStudentsId().size(); i++) {
+            students.add(dbService.getStudentDatabase().getStudent(teacherDto.getStudentsId().get(i)));
+        }
+        return students;
+    }
+
+    private List<Teacher> getTeachers(StudentDto studentDto) {
+        List<Teacher> teachers = new ArrayList<>();
+        for (int i = 0; i < studentDto.getLessonsId().size(); i++) {
+            teachers.add(dbService.getTeacherDatabase().getTeacher(studentDto.getTeachersId().get(i)));
+        }
+        return teachers;
+    }
+
+    private List<Mark> getMarks(StudentDto studentDto) {
+        List<Mark> marks = new ArrayList<>();
+        for (int i = 0; i < studentDto.getLessonsId().size(); i++) {
+            marks.add(dbService.getMarkDatabase().getMark(studentDto.getMarksId().get(i)));
+        }
+        return marks;
+    }
+
+    private List<Homework> getHomework(StudentDto studentDto) {
+        return dbService.getHomeworkDatabase().getAllHomeworkByStudentId(studentDto.getId());
+    }
+
+    private List<String> getTeachersNames(Lesson lesson){
+        return lesson.getTeachers().stream()
+                .map(teacher -> teacher.getName() + " " + teacher.getLastname())
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getStudentsNames(Lesson lesson){
+        return lesson.getStudents().stream()
+                .map(student -> student.getName() + " " + student.getClassNumber())
+                .collect(Collectors.toList());
+    }
+    private List<Long> getTeachersId(Lesson lesson) {
+        return lesson.getTeachers().stream()
+                .map(Teacher::getId)
+                .collect(Collectors.toList());
+    }
+    private List<Long> getStudentsId(Lesson lesson) {
+        return lesson.getStudents().stream()
+                .map(Student::getId)
+                .collect(Collectors.toList());
+    }
+    private List<String> getTeachersNames(Student student){
+        return student.getTeachers().stream()
+                .map(teacher -> teacher.getName() + " " + teacher.getLastname())
+                .collect(Collectors.toList());
+    }
+    private List<String> getLessonsNames(Student student){
+        return student.getLessons().stream()
+                .map(Lesson::getName)
+                .collect(Collectors.toList());
+    }
+    private List<Long> getTeachersId(Student student) {
+        return student.getTeachers().stream()
+                .map(Teacher::getId)
+                .collect(Collectors.toList());
+    }
+    private List<Long> getLessonsId(Student student) {
+        return student.getLessons().stream()
+                .map(Lesson::getId)
+                .collect(Collectors.toList());
+    }
+    private List<Long> getMarksId(Student student) {
+        return student.getMarks().stream()
+                .map(Mark::getId)
+                .collect(Collectors.toList());
+    }
+    private List<Long> getStudentsId(Teacher teacher) {
+        return teacher.getStudents().stream()
+                .map(Student::getId)
+                .collect(Collectors.toList());
+    }
+
+    private List<Long> getLessonsId(Teacher teacher) {
+        return teacher.getLessons().stream()
+                .map(Lesson::getId)
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getStudentsNames(Teacher teacher) {
+        return teacher.getStudents().stream()
+                .map(student -> student.getName() + " " + student.getLastname())
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getLessonsNames(Teacher teacher) {
+        return teacher.getLessons().stream()
+                .map(Lesson::getName)
+                .collect(Collectors.toList());
     }
 }
