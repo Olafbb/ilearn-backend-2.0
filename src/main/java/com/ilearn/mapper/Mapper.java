@@ -185,61 +185,45 @@ public class Mapper {
                 .collect(Collectors.toList());
     }
 
-
-    ////////////////////////////////////////////////////////////////////
     private List<Student> getStudents(LessonDto lessonDto) {
-        List<Student> students = new ArrayList<>();
-        for (int i = 0; i < lessonDto.getStudentsId().size(); i++) {
-            students.add(dbService.getStudentDatabase().getStudent(lessonDto.getStudentsId().get(i)));
-        }
-        return students;
+        return lessonDto.getStudentsId().stream()
+                .map(id -> dbService.getStudentDatabase().getStudent(id))
+                .collect(Collectors.toList());
     }
 
     private List<Teacher> getTeachers(LessonDto lessonDto) {
-        List<Teacher> teachers = new ArrayList<>();
-        for (int i = 0; i < lessonDto.getStudentsId().size(); i++) {
-            teachers.add(dbService.getTeacherDatabase().getTeacher(lessonDto.getTeachersId().get(i)));
-        }
-        return teachers;
+        return lessonDto.getTeachersId().stream()
+                .map(id -> dbService.getTeacherDatabase().getTeacher(id))
+                .collect(Collectors.toList());
     }
     private List<Lesson> getLessons(StudentDto studentDto) {
-        List<Lesson> lessons = new ArrayList<>();
-        for (int i = 0; i < studentDto.getLessonsId().size(); i++) {
-            lessons.add(dbService.getLessonDatabase().getLesson(studentDto.getLessonsId().get(i)));
-        }
-        return lessons;
+        return studentDto.getLessonsId().stream()
+                .map(id -> dbService.getLessonDatabase().getLesson(id))
+                .collect(Collectors.toList());
     }
 
     private List<Lesson> getLessons(TeacherDto teacherDto) {
-        List<Lesson> lessons = new ArrayList<>();
-        for (int i = 0; i < teacherDto.getLessonsId().size(); i++) {
-            lessons.add(dbService.getLessonDatabase().getLesson(teacherDto.getLessonsId().get(i)));
-        }
-        return lessons;
+        return teacherDto.getLessonsId().stream()
+                .map(id -> dbService.getLessonDatabase().getLesson(id))
+                .collect(Collectors.toList());
     }
 
     private List<Student> getStudents(TeacherDto teacherDto) {
-        List<Student> students = new ArrayList<>();
-        for (int i = 0; i < teacherDto.getStudentsId().size(); i++) {
-            students.add(dbService.getStudentDatabase().getStudent(teacherDto.getStudentsId().get(i)));
-        }
-        return students;
+        return teacherDto.getStudentsId().stream()
+                .map(id -> dbService.getStudentDatabase().getStudent(id))
+                .collect(Collectors.toList());
     }
 
     private List<Teacher> getTeachers(StudentDto studentDto) {
-        List<Teacher> teachers = new ArrayList<>();
-        for (int i = 0; i < studentDto.getLessonsId().size(); i++) {
-            teachers.add(dbService.getTeacherDatabase().getTeacher(studentDto.getTeachersId().get(i)));
-        }
-        return teachers;
+        return studentDto.getTeachersId().stream()
+                .map(id -> dbService.getTeacherDatabase().getTeacher(id))
+                .collect(Collectors.toList());
     }
 
     private List<Mark> getMarks(StudentDto studentDto) {
-        List<Mark> marks = new ArrayList<>();
-        for (int i = 0; i < studentDto.getLessonsId().size(); i++) {
-            marks.add(dbService.getMarkDatabase().getMark(studentDto.getMarksId().get(i)));
-        }
-        return marks;
+        return studentDto.getMarksId().stream()
+                .map(id -> dbService.getMarkDatabase().getMark(id))
+                .collect(Collectors.toList());
     }
 
     private List<Homework> getHomework(StudentDto studentDto) {
