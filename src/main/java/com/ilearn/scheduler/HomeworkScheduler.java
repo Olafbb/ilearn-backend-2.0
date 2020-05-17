@@ -2,7 +2,7 @@ package com.ilearn.scheduler;
 
 import com.ilearn.config.AdminConfig;
 import com.ilearn.domain.Homework;
-import com.ilearn.domain.mail.Mail;
+import com.ilearn.domain.dto.Mail;
 import com.ilearn.service.DbService;
 import com.ilearn.service.EmailService;
 import org.springframework.scheduling.annotation.Scheduled;

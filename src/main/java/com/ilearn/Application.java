@@ -1,6 +1,6 @@
 package com.ilearn;
 
-import com.ilearn.domain.chat.ChatMessage;
+import com.ilearn.domain.dto.ChatMessage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

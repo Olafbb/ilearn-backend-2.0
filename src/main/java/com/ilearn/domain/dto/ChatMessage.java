@@ -1,4 +1,4 @@
-package com.ilearn.domain.chat;
+package com.ilearn.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

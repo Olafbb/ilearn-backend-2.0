@@ -1,7 +1,7 @@
 package com.ilearn.service.discord;
 
 import com.ilearn.config.InfoConfig;
-import com.ilearn.domain.dto.discord.ChannelDto;
+import com.ilearn.domain.dto.ChannelDto;
 import com.ilearn.service.discord.utilities.ClearCommand;
 import com.ilearn.service.discord.utilities.GuildMemberJoin;
 import com.ilearn.service.discord.utilities.GuildMemberLeave;

@@ -1,6 +1,6 @@
 package com.ilearn.service.chat;
 
-import com.ilearn.domain.chat.ChatMessage;
+import com.ilearn.domain.dto.ChatMessage;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;

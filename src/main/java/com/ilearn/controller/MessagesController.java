@@ -1,6 +1,6 @@
 package com.ilearn.controller;
 
-import com.ilearn.domain.chat.ChatMessage;
+import com.ilearn.domain.dto.ChatMessage;
 import com.ilearn.service.chat.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

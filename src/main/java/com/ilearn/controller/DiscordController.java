@@ -1,6 +1,6 @@
 package com.ilearn.controller;
 
-import com.ilearn.domain.dto.discord.ChannelDto;
+import com.ilearn.domain.dto.ChannelDto;
 import com.ilearn.service.discord.DiscordBotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

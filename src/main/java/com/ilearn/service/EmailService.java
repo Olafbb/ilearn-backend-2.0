@@ -1,6 +1,6 @@
 package com.ilearn.service;
 
-import com.ilearn.domain.mail.Mail;
+import com.ilearn.domain.dto.Mail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;

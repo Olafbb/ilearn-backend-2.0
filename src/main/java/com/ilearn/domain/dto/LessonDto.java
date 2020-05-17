@@ -2,6 +2,8 @@ package com.ilearn.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ilearn.domain.dto.interfaces.StudentsId;
+import com.ilearn.domain.dto.interfaces.TeachersId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -11,7 +13,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LessonDto {
+public class LessonDto implements StudentsId, TeachersId {
     @JsonProperty("id")
     private Long id;
     @JsonProperty("name")

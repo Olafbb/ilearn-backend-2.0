@@ -1,5 +1,8 @@
 package com.ilearn.domain;
 
+import com.ilearn.domain.interfaces.Lessons;
+import com.ilearn.domain.interfaces.Marks;
+import com.ilearn.domain.interfaces.Teachers;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Transactional
-public class Student {
+public class Student implements Lessons, Teachers, Marks {
     @Id
     @GeneratedValue
     @NotNull

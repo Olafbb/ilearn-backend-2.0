@@ -10,7 +10,7 @@ import java.util.Date;
 @Getter
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MarkDto {
+public class MarkDto  {
     @JsonProperty("id")
     private Long id;
 

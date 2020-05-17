@@ -1,4 +1,4 @@
-package com.ilearn.domain.dto.discord;
+package com.ilearn.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
